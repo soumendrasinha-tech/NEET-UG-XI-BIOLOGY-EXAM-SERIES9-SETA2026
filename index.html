@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumendra Sir's Biology Classes - NEET CBT Exam Series 8 Set A</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for graphical analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2canvas for certificate PNG export -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            background-color: #0f172a;
+        }
+
+        /* Anti-photography watermark grid overlay */
+        .watermark-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.12;
+            background-image: repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50px);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+            overflow: hidden;
+        }
+        .watermark-text {
+            transform: rotate(-25deg);
+            font-size: 13px;
+            font-weight: 800;
+            color: #ef4444;
+            white-space: nowrap;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Custom scrollbar for question palette */
+        .palette-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .palette-scroll::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .palette-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+
+        /* Radio option highlight */
+        .option-radio:checked + div {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #ffffff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+    <!-- ANTI-PHOTOGRAPHY & ANTI-RECORDING VISUAL WATERMARK OVERLAY -->
+    <div id="watermarkGrid" class="watermark-overlay">
+        <!-- Dynamic watermarks inserted via JS -->
+    </div>
+
+    <!-- MAIN EXAM CONTAINER -->
+    <div id="app" class="w-full min-h-screen flex flex-col bg-slate-900 text-slate-100">
+
+        <!-- HEADER -->
+        <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex justify-between items-center shadow-lg">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-600 text-white p-2.5 rounded-xl font-black text-xl tracking-wider">
+                    SS
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-100 tracking-tight leading-tight">
+                        Soumendra Sir's Biology Classes - 8910587106
+                    </h1>
+                    <p class="text-xs text-emerald-400 font-medium">NEET BIOLOGY XI EXAM SERIES 8 SET A • Human Physiology</p>
+                </div>
+            </div>
+            <div id="candidateHeaderInfo" class="hidden text-right bg-slate-900/80 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
+                <p class="text-slate-400">Candidate: <span id="headerCandidateName" class="text-white font-bold"></span></p>
+                <p class="text-emerald-400 font-mono text-[11px]" id="headerDateDisplay"></p>
+            </div>
+        </header>
+
+        <!-- SCREEN 1: LOGIN & SECURITY VERIFICATION -->
+        <div id="loginScreen" class="flex-1 flex items-center justify-center p-4">
+            <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-6">
+                <div class="text-center space-y-2">
+                    <span class="inline-block px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-semibold uppercase tracking-wider border border-emerald-500/20">
+                        Secure CBT Examination Portal
+                    </span>
+                    <h2 class="text-2xl font-black text-white">Candidate Verification</h2>
+                    <p class="text-xs text-slate-400">NEET BIOLOGY XI EXAM SERIES 8 SET A (360 Marks)</p>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Candidate Full Name *</label>
+                        <input type="text" id="inputCandidateName" required placeholder="Enter your full name" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Captcha Verification *</label>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <div id="captchaBox" class="bg-slate-900 border border-slate-600 font-mono text-lg font-bold text-yellow-400 px-4 py-2 rounded-lg tracking-widest text-center select-none w-36">
+                                ------
+                            </div>
+                            <button type="button" onclick="generateCaptcha()" class="text-xs text-emerald-400 hover:underline">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                        <input type="text" id="inputCaptcha" required placeholder="Type the 5-character captcha" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 uppercase tracking-widest">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Exam Password (DDMMYYYY format) *</label>
+                        <input type="password" id="inputPassword" required placeholder="e.g. 20102026" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <p class="text-[11px] text-slate-500 mt-1">Hint: Use today's date in DDMMYYYY format (e.g. <span id="hintDate"></span>).</p>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-sm transition duration-200 shadow-lg shadow-emerald-600/30">
+                        Verify & Proceed to Exam Rules →
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: RULES & TOPICS SCREEN -->
+        <div id="rulesScreen" class="hidden flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-6">
+                <div class="border-b border-slate-700 pb-4">
+                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Test Blueprint & Guidelines</span>
+                    <h2 class="text-2xl font-black text-white mt-1">NEET BIOLOGY XI EXAM SERIES 8 SET A</h2>
+                    <p class="text-sm text-slate-300 mt-1">Syllabus: <b class="text-yellow-400">Breathing & Exchange of Gases, Body Fluids & Circulation, Excretory Products & Elimination</b></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Exam Syllabus Coverage</h3>
+                        <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                            <li>Respiratory organs, breathing mechanisms, gas transport (pO<sub>2</sub>, pCO<sub>2</sub>), volumes & disorders (Asthma, Emphysema).</li>
+                            <li>Blood composition, clotting, cardiac cycle, ECG, double circulation, CAD, Hypertension, Angina.</li>
+                            <li>Ammonotelism, Ureotelism, Uricotelism, Nephron structure, Urine formation, RAAS, ADH, ANF, Dialysis.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Pattern & Marking Scheme</h3>
+                        <ul class="text-xs text-slate-300 space-y-1.5">
+                            <li><b>Total Questions:</b> 90 Questions (360 Marks Total)</li>
+                            <li><b>Marking Scheme:</b> <span class="text-emerald-400 font-bold">+4</span> for correct, <span class="text-rose-400 font-bold">-1</span> for incorrect, <span class="text-slate-400">0</span> for unattempted</li>
+                            <li><b>Duration:</b> 60 Minutes (1 Hour countdown timer)</li>
+                            <li><b>Breakdown:</b> 20 Statement-based, 20 Assertion-Reason, 20 Case Study, 25 Critical Thinking, 5 Diagram-based</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-xs text-amber-300 space-y-1">
+                    <p class="font-bold">🛡️ Security & Integrity Enforcements:</p>
+                    <p>• The test forces Fullscreen Mode upon launch. Tab-switching triggers security alerts.</p>
+                    <p>• Anti-photography background grid watermarks protect question content.</p>
+                    <p>• Question sequence is dynamically randomized for every unique session.</p>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button onclick="startExam()" 
+                        class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition duration-200 shadow-lg shadow-emerald-600/30">
+                        🚀 Enable Fullscreen & Begin Exam
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: CBT EXAM INTERFACE -->
+        <div id="examScreen" class="hidden flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
+            <!-- MAIN QUESTION DISPLAY AREA -->
+            <div class="flex-1 flex flex-col bg-slate-900 border-r border-slate-800 overflow-y-auto">
+                <!-- TOP STATUS BAR -->
+                <div class="bg-slate-800/90 px-4 py-2 border-b border-slate-700 flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <span id="questionTypeBadge" class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded text-xs font-bold">
+                            Type
+                        </span>
+                        <span class="text-xs text-slate-400">Question <span id="currentQNum" class="text-white font-bold">1</span> of 90</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-slate-950 px-3 py-1 rounded-lg border border-slate-700">
+                        <span class="text-xs text-slate-400">Time Left:</span>
+                        <span id="timerDisplay" class="font-mono font-bold text-amber-400 text-sm">60:00</span>
+                    </div>
+                </div>
+
+                <!-- QUESTION CONTENT AREA -->
+                <div class="p-4 sm:p-6 flex-1 space-y-5 text-slate-100">
+                    <!-- Case Study Box -->
+                    <div id="caseStudyBox" class="hidden bg-slate-800/90 border border-slate-700 p-4 rounded-xl text-xs sm:text-sm text-slate-200 space-y-2">
+                        <p class="font-bold text-amber-400 uppercase tracking-wider text-xs">📖 Context / Case Paragraph:</p>
+                        <div id="caseStudyText" class="leading-relaxed"></div>
+                    </div>
+
+                    <!-- Diagram Box -->
+                    <div id="diagramBox" class="hidden bg-slate-950 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center">
+                        <p class="font-bold text-xs text-emerald-400 mb-2">📊 Biological Diagram Context:</p>
+                        <div id="diagramSvgContainer" class="w-full max-w-sm flex justify-center"></div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="text-xs text-slate-400 font-semibold tracking-wider uppercase">Question Statement:</div>
+                        <div id="questionText" class="text-sm sm:text-base leading-relaxed font-medium text-white">
+                            <!-- Question text rendered here -->
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <div class="text-xs text-slate-400 font-semibold tracking-wider uppercase">Select Correct Option:</div>
+                        <div id="optionsContainer" class="space-y-2.5">
+                            <!-- Options rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM CONTROLS BAR -->
+                <div class="bg-slate-800 border-t border-slate-700 px-4 py-3 flex flex-wrap gap-2 justify-between items-center">
+                    <div class="flex space-x-2">
+                        <button onclick="markForReviewAndNext()" class="px-3 py-2 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500 text-purple-200 text-xs font-bold rounded-lg transition">
+                            📌 Mark for Review & Next
+                        </button>
+                        <button onclick="clearResponse()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg transition">
+                            🧹 Clear Response
+                        </button>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="prevQuestion()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg transition">
+                            ← Previous
+                        </button>
+                        <button onclick="saveAndNext()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition shadow-lg shadow-emerald-600/30">
+                            Save & Next →
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PALETTE SIDEBAR -->
+            <div class="w-full md:w-80 bg-slate-900 flex flex-col border-t md:border-t-0 md:border-l border-slate-800">
+                <div class="p-3 border-b border-slate-800 bg-slate-800/50">
+                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Question Palette (90 Questions)</h3>
+                </div>
+
+                <!-- PALETTE LEGEND -->
+                <div class="p-3 grid grid-cols-2 gap-2 text-[11px] border-b border-slate-800 bg-slate-950/40">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="text-slate-300">Answered</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-rose-500 inline-block"></span>
+                        <span class="text-slate-300">Not Answered</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600 inline-block"></span>
+                        <span class="text-slate-300">Marked Review</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-slate-700 inline-block"></span>
+                        <span class="text-slate-300">Not Visited</span>
+                    </div>
+                </div>
+
+                <!-- PALETTE DOTS GRID -->
+                <div class="flex-1 p-3 overflow-y-auto palette-scroll max-h-[380px] md:max-h-none">
+                    <div id="paletteGrid" class="grid grid-cols-5 gap-1.5">
+                        <!-- 90 dynamic dots -->
+                    </div>
+                </div>
+
+                <!-- SUBMIT TEST BUTTON -->
+                <div class="p-3 border-t border-slate-800 bg-slate-900">
+                    <button onclick="confirmSubmitExam()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-600/30">
+                        Submit Final Test
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: FEEDBACK, GRAPHICAL ANALYTICS & ANSWER KEYS -->
+        <div id="reportScreen" class="hidden flex-1 max-w-5xl mx-auto w-full p-4 sm:p-6 space-y-6">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-6">
+                <!-- REPORT HEADER -->
+                <div class="flex flex-wrap justify-between items-center border-b border-slate-700 pb-4 gap-2">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Diagnostic Performance Report</span>
+                        <h2 class="text-2xl font-black text-white">NEET Biology Feedback & Scorecard</h2>
+                        <p class="text-xs text-slate-400 mt-1">Candidate: <b id="reportCandidateName" class="text-white"></b> • Date: <span id="reportDate"></span></p>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-700 px-4 py-2 rounded-xl text-center">
+                        <span class="text-[10px] uppercase text-slate-400 block font-bold">Total Marks Obtained</span>
+                        <span id="totalMarksScore" class="text-2xl font-black text-amber-400">0 / 360</span>
+                    </div>
+                </div>
+
+                <!-- GRAPHICAL REPRESENTATION & METRICS -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 flex flex-col items-center justify-center">
+                        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Performance Distribution</h3>
+                        <div class="w-48 h-48">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block font-semibold">Correct (+4)</span>
+                            <span id="metricCorrect" class="text-xl font-bold text-emerald-400">0</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block font-semibold">Incorrect (-1)</span>
+                            <span id="metricIncorrect" class="text-xl font-bold text-rose-400">0</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block font-semibold">Unattempted</span>
+                            <span id="metricUnattempted" class="text-xl font-bold text-slate-400">0</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 text-center">
+                            <span class="text-xs text-slate-400 block font-semibold">Accuracy %</span>
+                            <span id="metricAccuracy" class="text-xl font-bold text-blue-400">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WEAK AREA DIAGNOSTIC ALERT -->
+                <div class="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 space-y-2">
+                    <h3 class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center space-x-2">
+                        <span>🎯 Diagnostic Focus Areas & Subtopic Analysis</span>
+                    </h3>
+                    <div id="weakAreasContainer" class="text-xs text-slate-300 space-y-1.5">
+                        <!-- Weak subtopics dynamically evaluated -->
+                    </div>
+                </div>
+
+                <!-- WHATSAPP SUBMISSION & BADGE GENERATOR -->
+                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Send Verified Scorecard to Soumendra Sir</h4>
+                        <p class="text-xs text-slate-400">Generates a high-resolution tamper-evident PNG mark card and sends it to WhatsApp 8910587106.</p>
+                    </div>
+                    <button onclick="generateAndSendMarksImage()" 
+                        class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 transition shadow-lg shadow-emerald-600/30">
+                        <span>📲 Send PNG Scorecard to WhatsApp (+91 8910587106)</span>
+                    </button>
+                </div>
+
+                <!-- DETAILED ANSWER KEY & STEP-BY-STEP EXPLANATIONS -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-700 pb-2">
+                        Detailed Answer Keys & Explanations (1 to 90)
+                    </h3>
+                    <div id="answerKeysList" class="space-y-4 max-h-[500px] overflow-y-auto palette-scroll pr-2">
+                        <!-- 90 detailed answer key cards -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HIDDEN PNG CERTIFICATE CARD FOR HTML2CANVAS CONVERSION -->
+    <div id="certificateCapture" class="fixed -left-[9999px] top-0 w-[600px] bg-slate-900 text-white p-6 rounded-2xl border-2 border-emerald-400 space-y-4">
+        <div class="text-center border-b border-slate-700 pb-3">
+            <h2 class="text-lg font-black text-emerald-400">Soumendra Sir's Biology Classes</h2>
+            <p class="text-xs text-slate-400">Contact: +91 8910587106 • Official CBT Score Certificate</p>
+            <p class="text-xs font-bold text-yellow-400 mt-1">NEET BIOLOGY XI EXAM SERIES 8 SET A (360 Marks)</p>
+        </div>
+        <div class="space-y-2 text-xs">
+            <p><b>Candidate Name:</b> <span id="certName" class="text-white"></span></p>
+            <p><b>Topics:</b> Breathing & Exchange, Body Fluids, Excretion</p>
+            <p><b>Timestamp:</b> <span id="certTimestamp"></span></p>
+        </div>
+        <div class="grid grid-cols-4 gap-2 text-center text-xs py-2 bg-slate-800 rounded-xl">
+            <div><span class="block text-slate-400 text-[10px]">TOTAL SCORE</span><b id="certTotalScore" class="text-amber-400 text-sm"></b></div>
+            <div><span class="block text-slate-400 text-[10px]">CORRECT</span><b id="certCorrect" class="text-emerald-400"></b></div>
+            <div><span class="block text-slate-400 text-[10px]">INCORRECT</span><b id="certIncorrect" class="text-rose-400"></b></div>
+            <div><span class="block text-slate-400 text-[10px]">ACCURACY</span><b id="certAccuracy" class="text-blue-400"></b></div>
+        </div>
+        <div class="text-[10px] text-center text-slate-500 border-t border-slate-800 pt-2">
+            Verified Digital CBT Mark Sheet • Record ID: <span id="certUUID"></span>
+        </div>
+    </div>
+
+    <script>
+        // SVG Diagrams Database for Diagram-based questions
+        const svgDiagrams = {
+            respiratory: `<svg viewBox="0 0 200 160" class="w-48 h-36 bg-slate-900 rounded-lg p-2 border border-slate-700"><path d="M100 20 v40 M100 60 L70 90 M100 60 L130 90" stroke="#38bdf8" stroke-width="4" fill="none"/><circle cx="60" cy="110" r="25" fill="#0284c7" opacity="0.6"/><circle cx="140" cy="110" r="25" fill="#0284c7" opacity="0.6"/><text x="95" y="15" fill="#f8fafc" font-size="10">A (Trachea)</text><text x="35" y="85" fill="#f8fafc" font-size="10">B (Bronchus)</text><text x="125" y="145" fill="#f8fafc" font-size="10">C (Alveoli)</text></svg>`,
+            heart: `<svg viewBox="0 0 200 160" class="w-48 h-36 bg-slate-900 rounded-lg p-2 border border-slate-700"><rect x="50" y="30" width="45" height="45" rx="5" fill="#ef4444" opacity="0.7"/><rect x="105" y="30" width="45" height="45" rx="5" fill="#ef4444" opacity="0.9"/><rect x="50" y="85" width="45" height="50" rx="5" fill="#dc2626"/><rect x="105" y="85" width="45" height="50" rx="5" fill="#b91c1c"/><text x="55" y="55" fill="#fff" font-size="9">RA</text><text x="115" y="55" fill="#fff" font-size="9">LA</text><text x="55" y="115" fill="#fff" font-size="9">RV</text><text x="115" y="115" fill="#fff" font-size="9">LV</text><text x="80" y="20" fill="#facc15" font-size="10">A (SA Node)</text></svg>`,
+            nephron: `<svg viewBox="0 0 200 160" class="w-48 h-36 bg-slate-900 rounded-lg p-2 border border-slate-700"><circle cx="40" cy="40" r="18" fill="#f43f5e" opacity="0.5"/><path d="M58 40 Q 90 40 90 70 T 120 110 T 150 50 L 170 50" stroke="#10b981" stroke-width="4" fill="none"/><text x="25" y="43" fill="#fff" font-size="9">A (Glomerulus)</text><text x="75" y="60" fill="#fff" font-size="9">B (PCT)</text><text x="105" y="130" fill="#fff" font-size="9">C (Loop of Henle)</text></svg>`,
+            ecg: `<svg viewBox="0 0 200 120" class="w-52 h-28 bg-slate-900 rounded-lg p-2 border border-slate-700"><path d="M10 70 L40 70 L50 60 L60 70 L70 70 L80 15 L90 100 L100 70 L120 70 L135 45 L150 70 L190 70" stroke="#f59e0b" stroke-width="3" fill="none"/><text x="45" y="50" fill="#fff" font-size="10">P</text><text x="75" y="115" fill="#fff" font-size="10">QRS</text><text x="135" y="38" fill="#fff" font-size="10">T</text></svg>`,
+            countercurrent: `<svg viewBox="0 0 200 160" class="w-48 h-36 bg-slate-900 rounded-lg p-2 border border-slate-700"><path d="M60 20 V 130 Q 60 145 75 145 Q 90 145 90 130 V 20" stroke="#3b82f6" stroke-width="4" fill="none"/><path d="M120 20 V 130 Q 120 145 135 145 Q 150 145 150 130 V 20" stroke="#ef4444" stroke-width="4" fill="none"/><text x="35" y="80" fill="#fff" font-size="9">Henle's Loop</text><text x="155" y="80" fill="#fff" font-size="9">Vasa Recta</text></svg>`
+        };
+
+        // =========================================================================
+        // 1. COMPLETE 90 QUESTIONS DATABASE
+        // =========================================================================
+        const masterQuestions = [
+            // --- 20 STATEMENT BASED QUESTIONS ---
+            {
+                id: 1, type: "Statement Based", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Statement I:</b> Trachea is a straight tube extending up to the mid-thoracic cavity, which divides at the level of 5<sup>th</sup> thoracic vertebra.<br><b>Statement II:</b> Primary, secondary, and tertiary bronchi and initial bronchioles are supported by complete cartilaginous rings.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement I is correct. Statement II is incorrect because bronchioles and bronchi are supported by INCOMPLETE cartilaginous rings, not complete rings."
+            },
+            {
+                id: 2, type: "Statement Based", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Statement I:</b> Inspiration is initiated by contraction of diaphragm which increases thoracic volume in antero-posterior axis.<br><b>Statement II:</b> Contraction of external intercostal muscles lifts ribs and sternum causing increase in dorso-ventral axis.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements are correct according to NCERT human physiology specifications."
+            },
+            {
+                id: 3, type: "Statement Based", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Statement I:</b> Partial pressure of oxygen (pO<sub>2</sub>) in alveoli is 104 mmHg while in deoxygenated blood it is 40 mmHg.<br><b>Statement II:</b> Solubility of CO<sub>2</sub> is 20-25 times higher than that of O<sub>2</sub> across the diffusion membrane.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "pO<sub>2</sub> in alveoli = 104 mmHg, in deoxygenated blood = 40 mmHg. CO<sub>2</sub> solubility is 20-25 times higher than O<sub>2</sub>."
+            },
+            {
+                id: 4, type: "Statement Based", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Statement I:</b> Every 100 mL of oxygenated blood can deliver around 5 mL of O<sub>2</sub> to the tissues under normal physiological conditions.<br><b>Statement II:</b> Every 100 mL of deoxygenated blood delivers approximately 4 mL of CO<sub>2</sub> to the alveoli.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements are standard NCERT physiological delivery metrics."
+            },
+            {
+                id: 5, type: "Statement Based", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Statement I:</b> Pneumotaxic center present in the pons region of brain can moderate the functions of respiratory rhythm center.<br><b>Statement II:</b> A chemosensitive area adjacent to rhythm center is highly sensitive to O<sub>2</sub> and H<sup>+</sup> ions.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement II is incorrect because the chemosensitive area is sensitive to CO<sub>2</sub> and H<sup>+</sup> ions, NOT O<sub>2</sub>. Role of oxygen is insignificant."
+            },
+            {
+                id: 6, type: "Statement Based", subtopic: "Body Fluids & Circulation",
+                question: "<b>Statement I:</b> Erythrocytes are enucleated in most mammals and have biconcave shape.<br><b>Statement II:</b> Basophils are involved in inflammatory reactions and secrete histamine, serotonin, and heparin.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements are correct concerning formed elements of blood."
+            },
+            {
+                id: 7, type: "Statement Based", subtopic: "Body Fluids & Circulation",
+                question: "<b>Statement I:</b> Person with blood group AB is called universal recipient because plasma lacks both anti-A and anti-B antibodies.<br><b>Statement II:</b> Rh incompatibility disease Erythroblastosis foetalis occurs when Rh<sup>+</sup> mother carries Rh<sup>-</sup> fetus.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement II is incorrect because Erythroblastosis foetalis occurs when Rh<sup>-</sup> mother carries Rh<sup>+</sup> fetus."
+            },
+            {
+                id: 8, type: "Statement Based", subtopic: "Body Fluids & Circulation",
+                question: "<b>Statement I:</b> Lymph is a colorless fluid containing specialized lymphocytes responsible for immune responses.<br><b>Statement II:</b> Fats are absorbed through lymph in the lacteals present in the intestinal villi.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements regarding lymphatic transport and immunity are correct."
+            },
+            {
+                id: 9, type: "Statement Based", subtopic: "Body Fluids & Circulation",
+                question: "<b>Statement I:</b> SAN generates maximum action potentials (70-75/min) and sets the pace of cardiac contractions.<br><b>Statement II:</b> During joint diastole, all four chambers of heart are in a relaxed state.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements are correct regarding SAN pacemaker activity and cardiac cycle."
+            },
+            {
+                id: 10, type: "Statement Based", subtopic: "Body Fluids & Circulation",
+                question: "<b>Statement I:</b> First heart sound 'Lubb' is associated with closure of semilunar valves.<br><b>Statement II:</b> Second heart sound 'Dubb' is associated with closure of tricuspid and bicuspid valves.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 1, explanation: "Both are incorrect. Lubb = closure of AV (tricuspid/bicuspid) valves; Dubb = closure of semilunar valves."
+            },
+            {
+                id: 11, type: "Statement Based", subtopic: "Excretory Products & Elimination",
+                question: "<b>Statement I:</b> Ammonia is the most toxic nitrogenous waste and requires large amounts of water for elimination.<br><b>Statement II:</b> Reptiles, birds, and land snails excrete uric acid as pellet/paste with minimum loss of water.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements accurately describe nitrogenous waste modes (Ammonotelism vs Uricotelism)."
+            },
+            {
+                id: 12, type: "Statement Based", subtopic: "Excretory Products & Elimination",
+                question: "<b>Statement I:</b> Podocytes are epithelial cells of Bowman's capsule arranged in intricate pattern leaving filtration slits.<br><b>Statement II:</b> Glomerular filtration rate (GFR) in a healthy human is approximately 125 mL/min (180 L/day).",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements are accurate NCERT excretory facts."
+            },
+            {
+                id: 13, type: "Statement Based", subtopic: "Excretory Products & Elimination",
+                question: "<b>Statement I:</b> PCT reabsorbs nearly 70-80% of electrolytes and water by active and passive mechanisms.<br><b>Statement II:</b> Descending limb of Henle's loop is permeable to electrolytes but impermeable to water.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement II is false: Descending limb is permeable to WATER and impermeable to electrolytes."
+            },
+            {
+                id: 14, type: "Statement Based", subtopic: "Excretory Products & Elimination",
+                question: "<b>Statement I:</b> ANF (Atrial Natriuretic Factor) causes vasodilation and decreases blood pressure.<br><b>Statement II:</b> ANF acts as a check on the Renin-Angiotensin mechanism.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both statements are correct regarding counter-regulation of kidney function by heart."
+            },
+            {
+                id: 15, type: "Statement Based", subtopic: "Excretory Products & Elimination",
+                question: "<b>Statement I:</b> ADH facilitates water reabsorption from distal parts of tubule, preventing diuresis.<br><b>Statement II:</b> Diabetes insipidus is caused by hypersecretion of ADH leading to water retention.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement II is false: Diabetes insipidus is caused by HYPOSECRETION/deficiency of ADH."
+            },
+            {
+                id: 16, type: "Statement Based", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Statement I:</b> Functional Residual Capacity (FRC) = ERV + RV.<br><b>Statement II:</b> Total Lung Capacity (TLC) = VC + RV.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both lung volume capacity equations are strictly correct."
+            },
+            {
+                id: 17, type: "Statement Based", subtopic: "Body Fluids & Circulation",
+                question: "<b>Statement I:</b> Coronary Artery Disease (CAD) is caused by deposits of calcium, fat, cholesterol in vessels supplying heart muscle.<br><b>Statement II:</b> Angina pectoris occurs when no blood reaches the brain leading to stroke.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement II is false: Angina pectoris is acute chest pain when insufficient oxygen reaches heart muscle."
+            },
+            {
+                id: 18, type: "Statement Based", subtopic: "Excretory Products & Elimination",
+                question: "<b>Statement I:</b> Dialyzing fluid used in hemodialysis has same composition as plasma except it lacks nitrogenous wastes.<br><b>Statement II:</b> Anti-heparin is added to blood before pumping it into the dialyzer unit.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement II is false: HEPARIN is added before entering dialyzer, anti-heparin is added AFTER dialyzer before returning blood to body."
+            },
+            {
+                id: 19, type: "Statement Based", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Statement I:</b> Emphysema is a chronic disorder in which alveolar walls are damaged resulting in decreased respiratory surface.<br><b>Statement II:</b> Occupational respiratory disorders like silicosis lead to inflammation and fibrosis of lungs.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 0, explanation: "Both clinical disease statements are correct."
+            },
+            {
+                id: 20, type: "Statement Based", subtopic: "Body Fluids & Circulation",
+                question: "<b>Statement I:</b> Hepatic portal vein carries blood from intestine to liver before delivering to systemic circulation.<br><b>Statement II:</b> Hepatic portal system is absent in higher vertebrates like humans.",
+                options: ["Both Statement I and Statement II are correct", "Both Statement I and Statement II are incorrect", "Statement I is correct but Statement II is incorrect", "Statement I is incorrect but Statement II is correct"],
+                correct: 2, explanation: "Statement II is false: Hepatic portal system is present in humans."
+            },
+
+            // --- 20 ASSERTION & REASONING QUESTIONS ---
+            {
+                id: 21, type: "Assertion & Reason", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Assertion (A):</b> Oxygen dissociation curve shifts to the right during strenuous physical exercise.<br><b>Reason (R):</b> High pCO<sub>2</sub>, high H<sup>+</sup> concentration, high temperature, and low pO<sub>2</sub> in exercising muscle favor dissociation of oxyhemoglobin.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Exercise increases metabolic waste (CO<sub>2</sub>, heat, H<sup>+</sup>), shifting curve right to unload O<sub>2</sub>."
+            },
+            {
+                id: 22, type: "Assertion & Reason", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Assertion (A):</b> Carbonic anhydrase enzyme is present in very high concentration in RBCs and minute quantities in plasma.<br><b>Reason (R):</b> Carbonic anhydrase facilitates reversible conversion of CO<sub>2</sub> and H<sub>2</sub>O into HCO<sub>3</sub><sup>-</sup> and H<sup>+</sup>.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "RBCs contain high carbonic anhydrase which catalyzes HCO<sub>3</sub><sup>-</sup> formation for 70% CO<sub>2</sub> transport."
+            },
+            {
+                id: 23, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> Persons with 'O' blood group are universal donors.<br><b>Reason (R):</b> Red blood cells of 'O' group persons lack both A and B surface antigens.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Absence of A and B antigens prevents agglutination in recipients."
+            },
+            {
+                id: 24, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> The SA Node is called the natural pacemaker of the human heart.<br><b>Reason (R):</b> SA node can generate the maximum number of action potentials (70-75 min<sup>-1</sup>) and initiates heart rhythm.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "SAN sets rhythmic pace because of highest frequency of action potentials."
+            },
+            {
+                id: 25, type: "Assertion & Reason", subtopic: "Excretory Products & Elimination",
+                question: "<b>Assertion (A):</b> Henle's loop and vasa recta play a significant role in producing concentrated urine.<br><b>Reason (R):</b> Counter-current mechanism creates an osmolarity gradient from 300 mOsmol/L in cortex to 1200 mOsmol/L in inner medulla.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Medullary hyperosmolarity created by counter-current allows water absorption from collecting duct."
+            },
+            {
+                id: 26, type: "Assertion & Reason", subtopic: "Excretory Products & Elimination",
+                question: "<b>Assertion (A):</b> Juxtaglomerular cells release Renin in response to a fall in glomerular blood flow/GFR.<br><b>Reason (R):</b> Renin converts Angiotensinogen in blood to Angiotensin I and subsequently Angiotensin II.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "RAAS activation starts with Renin release during low GFR to restore renal pressure."
+            },
+            {
+                id: 27, type: "Assertion & Reason", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Assertion (A):</b> Expiration is a passive process during normal quiet breathing.<br><b>Reason (R):</b> Expiration occurs due to relaxation of diaphragm and external intercostal muscles without active muscular contraction.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Relaxation brings chest back to resting volume passively."
+            },
+            {
+                id: 28, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> Blood clotting is prevented inside undamaged blood vessels.<br><b>Reason (R):</b> Uninjured endothelial lining releases prostacyclin and heparin prevents conversion of prothrombin.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Anticoagulants and smooth endothelium prevent intravascular clotting."
+            },
+            {
+                id: 29, type: "Assertion & Reason", subtopic: "Excretory Products & Elimination",
+                question: "<b>Assertion (A):</b> Uric acid excretion is an adaptation for terrestrial life conservation of water.<br><b>Reason (R):</b> Uric acid is highly toxic and requires vast amounts of water for excretion.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 2, explanation: "Reason is false: Uric acid is LEAST toxic and requires MINIMUM water."
+            },
+            {
+                id: 30, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> Cardiac output of an athlete is much higher than that of an ordinary man.<br><b>Reason (R):</b> Stroke volume of an athlete is significantly higher due to strong myocardial hypertrophy.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Athletic stroke volume is higher (e.g. 100 mL vs 70 mL), increasing cardiac output."
+            },
+            {
+                id: 31, type: "Assertion & Reason", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Assertion (A):</b> Asthma causes difficulty in breathing accompanied by wheezing sounds.<br><b>Reason (R):</b> Inflammation of bronchi and bronchioles causes bronchospasm and narrow airways.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Airway inflammation and spasm cause classic wheezing in asthma."
+            },
+            {
+                id: 32, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> Arteries have thicker muscular walls and narrower lumen compared to veins.<br><b>Reason (R):</b> Arteries carry blood away from heart under high systolic surge pressure.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Thick tunica media withstands high cardiac propulsion pressure."
+            },
+            {
+                id: 33, type: "Assertion & Reason", subtopic: "Excretory Products & Elimination",
+                question: "<b>Assertion (A):</b> Glucose and amino acids are reabsorbed actively in PCT.<br><b>Reason (R):</b> Active reabsorption occurs against concentration gradient requiring ATP energy.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Secondary active Na<sup>+</sup> cotransport reabsorbs 100% glucose in PCT."
+            },
+            {
+                id: 34, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> ECG is a graphical representation of the electrical activity of the heart during a cardiac cycle.<br><b>Reason (R):</b> The T-wave in ECG represents ventricular repolarization.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 1, explanation: "Both statements are true facts, but R is not the cause/explanation of definition A."
+            },
+            {
+                id: 35, type: "Assertion & Reason", subtopic: "Excretory Products & Elimination",
+                question: "<b>Assertion (A):</b> Prolonged hyperuricemia leads to renal calculi and gouty arthritis.<br><b>Reason (R):</b> Insoluble uric acid crystals deposit in joints and renal pelvis.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Urate crystal accumulation causes gout and stones."
+            },
+            {
+                id: 36, type: "Assertion & Reason", subtopic: "Breathing & Exchange of Gases",
+                question: "<b>Assertion (A):</b> Binding of oxygen with hemoglobin is primarily related to partial pressure of O<sub>2</sub>.<br><b>Reason (R):</b> In alveoli, high pO<sub>2</sub>, low pCO<sub>2</sub>, lesser H<sup>+</sup> concentration favor oxyhemoglobin formation.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Alveolar conditions directly promote loading of O<sub>2</sub> onto Hb."
+            },
+            {
+                id: 37, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> Pulmonary circulation carries deoxygenated blood to lungs and returns oxygenated blood to heart.<br><b>Reason (R):</b> Pulmonary artery arises from left ventricle and pulmonary vein enters right atrium.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 2, explanation: "Reason is false: Pulmonary artery arises from RIGHT ventricle; pulmonary vein enters LEFT atrium."
+            },
+            {
+                id: 38, type: "Assertion & Reason", subtopic: "Excretory Products & Elimination",
+                question: "<b>Assertion (A):</b> Lungs, liver, and skin also play roles in excretion of wastes.<br><b>Reason (R):</b> Lungs remove 18 L of CO<sub>2</sub> per hour; liver secretes bilirubin, biliverdin, and cholesterol into bile.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Accessory excretory organs remove metabolic byproducts."
+            },
+            {
+                id: 39, type: "Assertion & Reason", subtopic: "Body Fluids & Circulation",
+                question: "<b>Assertion (A):</b> Heart failure is same as cardiac arrest or heart attack.<br><b>Reason (R):</b> Heart failure means state of heart when it is not pumping blood effectively to meet body needs.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 3, explanation: "Assertion is false: Heart failure is NOT same as arrest (heart stops) or attack (muscle damage)."
+            },
+            {
+                id: 40, type: "Assertion & Reason", subtopic: "Excretory Products & Elimination",
+                question: "<b>Assertion (A):</b> Presence of glucose (glycosuria) and ketone bodies (ketonuria) in urine indicates diabetes mellitus.<br><b>Reason (R):</b> Insulin deficiency prevents cellular glucose uptake and causes breakdown of fats into ketone bodies.",
+                options: ["Both A and R are true and R is the correct explanation of A", "Both A and R are true but R is NOT the correct explanation of A", "A is true but R is false", "A is false but R is true"],
+                correct: 0, explanation: "Uncontrolled diabetes leads to glucosuria and ketonuria."
+            },
+
+            // --- 20 CASE STUDY BASED QUESTIONS ---
+            {
+                id: 41, type: "Case Study", subtopic: "Breathing & Exchange of Gases",
+                context: "<b>Case Study 1:</b> A 45-year-old heavy smoker visits a chest clinic complaining of progressive shortness of breath during routine walking. Spirometry reveals Tidal Volume (TV) = 500 mL, Inspiratory Reserve Volume (IRV) = 2500 mL, Expiratory Reserve Volume (ERV) = 800 mL, Residual Volume (RV) = 1800 mL. CT scan reveals breakdown of alveolar septa.",
+                question: "Calculate the Vital Capacity (VC) for this patient based on the spirometry values.",
+                options: ["3000 mL", "3800 mL", "4800 mL", "5600 mL"],
+                correct: 1, explanation: "VC = TV + IRV + ERV = 500 + 2500 + 800 = 3800 mL."
+            },
+            {
+                id: 42, type: "Case Study", subtopic: "Breathing & Exchange of Gases",
+                context: "<b>Case Study 1:</b> A 45-year-old heavy smoker visits a chest clinic complaining of progressive shortness of breath during routine walking. Spirometry reveals Tidal Volume (TV) = 500 mL, Inspiratory Reserve Volume (IRV) = 2500 mL, Expiratory Reserve Volume (ERV) = 800 mL, Residual Volume (RV) = 1800 mL. CT scan reveals breakdown of alveolar septa.",
+                question: "What respiratory disorder is most likely diagnosed in this patient?",
+                options: ["Asthma", "Emphysema", "Silicosis", "Pneumonia"],
+                correct: 1, explanation: "Cigarette smoking causing breakdown of alveolar septa is classic Emphysema."
+            },
+            {
+                id: 43, type: "Case Study", subtopic: "Breathing & Exchange of Gases",
+                context: "<b>Case Study 1:</b> A 45-year-old heavy smoker visits a chest clinic complaining of progressive shortness of breath during routine walking. Spirometry reveals Tidal Volume (TV) = 500 mL, Inspiratory Reserve Volume (IRV) = 2500 mL, Expiratory Reserve Volume (ERV) = 800 mL, Residual Volume (RV) = 1800 mL. CT scan reveals breakdown of alveolar septa.",
+                question: "Calculate the Total Lung Capacity (TLC) of this patient.",
+                options: ["4300 mL", "5600 mL", "3800 mL", "2300 mL"],
+                correct: 1, explanation: "TLC = VC + RV = 3800 + 1800 = 5600 mL."
+            },
+            {
+                id: 44, type: "Case Study", subtopic: "Body Fluids & Circulation",
+                context: "<b>Case Study 2:</b> An ICU patient undergoes clinical cardiac assessment. The cardiac monitoring display records a heart rate of 75 beats per minute. Echocardiogram demonstrates an End-Diastolic Volume (EDV) of 120 mL and End-Systolic Volume (ESV) of 50 mL in the left ventricle.",
+                question: "What is the Stroke Volume (SV) of this patient?",
+                options: ["50 mL", "70 mL", "120 mL", "170 mL"],
+                correct: 1, explanation: "Stroke Volume = EDV - ESV = 120 mL - 50 mL = 70 mL."
+            },
+            {
+                id: 45, type: "Case Study", subtopic: "Body Fluids & Circulation",
+                context: "<b>Case Study 2:</b> An ICU patient undergoes clinical cardiac assessment. The cardiac monitoring display records a heart rate of 75 beats per minute. Echocardiogram demonstrates an End-Diastolic Volume (EDV) of 120 mL and End-Systolic Volume (ESV) of 50 mL in the left ventricle.",
+                question: "Calculate the Cardiac Output for this patient.",
+                options: ["3.75 L/min", "5.25 L/min", "6.00 L/min", "9.00 L/min"],
+                correct: 1, explanation: "Cardiac Output = Heart Rate × Stroke Volume = 75 × 70 mL = 5250 mL/min = 5.25 L/min."
+            },
+            {
+                id: 46, type: "Case Study", subtopic: "Body Fluids & Circulation",
+                context: "<b>Case Study 2:</b> An ICU patient undergoes clinical cardiac assessment. The cardiac monitoring display records a heart rate of 75 beats per minute. Echocardiogram demonstrates an End-Diastolic Volume (EDV) of 120 mL and End-Systolic Volume (ESV) of 50 mL in the left ventricle.",
+                question: "If sympathetic nervous stimulation acts on the heart, what happens to stroke volume and cardiac output?",
+                options: ["Both decrease", "Both increase", "Stroke volume increases, cardiac output decreases", "No change"],
+                correct: 1, explanation: "Sympathetic stimulation increases ventricular contraction force (SV) and heart rate, increasing cardiac output."
+            },
+            {
+                id: 47, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 3:</b> A person suffering from severe dehydration following a desert trek presents with blood osmolarity of 320 mOsmol/L (Normal ~ 300). Hypothalamic osmoreceptors trigger neurohypophysis hormone release.",
+                question: "Which hormone is elevated in blood to combat dehydration?",
+                options: ["ANF", "Aldosterone", "ADH (Vasopressin)", "Renin"],
+                correct: 2, explanation: "High osmolarity triggers ADH release from neurohypophysis to reabsorb water."
+            },
+            {
+                id: 48, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 3:</b> A person suffering from severe dehydration following a desert trek presents with blood osmolarity of 320 mOsmol/L (Normal ~ 300). Hypothalamic osmoreceptors trigger neurohypophysis hormone release.",
+                question: "What effect does ADH have on urine volume and concentration?",
+                options: ["Increases volume, decreases concentration", "Decreases volume, increases concentration", "Increases both volume and concentration", "Decreases both"],
+                correct: 1, explanation: "ADH causes water reabsorption, producing hypertonic (concentrated) low-volume urine."
+            },
+            {
+                id: 49, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 3:</b> A person suffering from severe dehydration following a desert trek presents with blood osmolarity of 320 mOsmol/L (Normal ~ 300). Hypothalamic osmoreceptors trigger neurohypophysis hormone release.",
+                question: "Which nephron segment is the primary target site for ADH-mediated aquaporin insertion?",
+                options: ["PCT", "Descending limb of Henle", "DCT and Collecting Duct", "Bowman's capsule"],
+                correct: 2, explanation: "ADH acts on DCT and Collecting Duct to increase water permeability."
+            },
+            {
+                id: 50, type: "Case Study", subtopic: "Body Fluids & Circulation",
+                context: "<b>Case Study 4:</b> An emergency room victim with acute abdominal trauma requires urgent blood transfusion. Laboratory agglutination tests show: Anti-A serum = No Agglutination; Anti-B serum = Agglutination present; Anti-Rh serum = Agglutination present.",
+                question: "What is the exact ABO and Rh blood group of this patient?",
+                options: ["A positive (A<sup>+</sup>)", "B positive (B<sup>+</sup>)", "AB positive (AB<sup>+</sup>)", "O negative (O<sup>-</sup>)"],
+                correct: 1, explanation: "Agglutination with Anti-B and Anti-Rh indicates B antigen and Rh factor = B<sup>+</sup>."
+            },
+            {
+                id: 51, type: "Case Study", subtopic: "Body Fluids & Circulation",
+                context: "<b>Case Study 4:</b> An emergency room victim with acute abdominal trauma requires urgent blood transfusion. Laboratory agglutination tests show: Anti-A serum = No Agglutination; Anti-B serum = Agglutination present; Anti-Rh serum = Agglutination present.",
+                question: "Which blood group can be safely transfused to this patient in an absolute emergency if B<sup>+</sup> is unavailable?",
+                options: ["AB positive", "A negative", "O negative (O<sup>-</sup>)", "AB negative"],
+                correct: 2, explanation: "O<sup>-</sup> is universal donor blood and safe for emergency recipient."
+            },
+            {
+                id: 52, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 5:</b> A diabetic patient with chronic renal failure presents with serum urea levels of 180 mg/dL (Normal: 15-40 mg/dL) and severe anemia. The nephrologist prescribes artificial kidney therapy.",
+                question: "What is the clinical term for high accumulation of urea in blood?",
+                options: ["Renal Calculi", "Uraemia", "Glomerulonephritis", "Glycosuria"],
+                correct: 1, explanation: "Uraemia is excess accumulation of urea in blood due to kidney failure."
+            },
+            {
+                id: 53, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 5:</b> A diabetic patient with chronic renal failure presents with serum urea levels of 180 mg/dL (Normal: 15-40 mg/dL) and severe anemia. The nephrologist prescribes artificial kidney therapy.",
+                question: "Why does chronic renal failure cause severe anemia?",
+                options: ["Loss of RBCs in urine", "Deficiency of Erythropoietin produced by JG cells", "High urea destroys bone marrow", "Lack of renin"],
+                correct: 1, explanation: "Kidney juxtaglomerular cells produce Erythropoietin (EPO); failure leads to deficient RBC production."
+            },
+            {
+                id: 54, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 5:</b> A diabetic patient with chronic renal failure presents with serum urea levels of 180 mg/dL (Normal: 15-40 mg/dL) and severe anemia. The nephrologist prescribes artificial kidney therapy.",
+                question: "In the artificial dialyzer unit, what prevents blood coagulation during circulation?",
+                options: ["Adding Histamine", "Adding Heparin", "Adding Prothrombin", "Adding Calcium ions"],
+                correct: 1, explanation: "Heparin is added as an anticoagulant before blood enters dialyzer unit."
+            },
+            {
+                id: 55, type: "Case Study", subtopic: "Breathing & Exchange of Gases",
+                context: "<b>Case Study 6:</b> A stone-breaker working in a granite crushing factory for 15 years develops chronic cough and lung stiffness. Biopsy shows extensive fibrous tissue growth in upper lung lobes.",
+                question: "Identify the pathology affecting this worker.",
+                options: ["Asthma", "Occupational Respiratory Disorder (Silicosis)", "Emphysema", "Pneumothorax"],
+                correct: 1, explanation: "Granite/stone dust causes Silicosis, an occupational fibrous lung disorder."
+            },
+            {
+                id: 56, type: "Case Study", subtopic: "Breathing & Exchange of Gases",
+                context: "<b>Case Study 6:</b> A stone-breaker working in a granite crushing factory for 15 years develops chronic cough and lung stiffness. Biopsy shows extensive fibrous tissue growth in upper lung lobes.",
+                question: "What cellular reaction causes tissue damage in this condition?",
+                options: ["Bacterial toxin secretion", "Inability of macrophage lysosomes to digest silica, causing cell rupture and fibrosis", "Autoimmune destruction of surfactant", "Viral destruction"],
+                correct: 1, explanation: "Silica particles rupture macrophage lysosomes, releasing inflammatory enzymes that trigger fibrosis."
+            },
+            {
+                id: 57, type: "Case Study", subtopic: "Body Fluids & Circulation",
+                context: "<b>Case Study 7:</b> A 50-year-old male undergoes routine BP checkup. Three consecutive readings show 150/95 mmHg, 155/98 mmHg, and 148/96 mmHg.",
+                question: "Diagnose the cardiovascular condition.",
+                options: ["Normal Blood Pressure", "Hypertension", "Hypotension", "Angina Pectoris"],
+                correct: 1, explanation: "Sustained BP above 140/90 mmHg is clinically diagnosed as Hypertension."
+            },
+            {
+                id: 58, type: "Case Study", subtopic: "Body Fluids & Circulation",
+                context: "<b>Case Study 7:</b> A 50-year-old male undergoes routine BP checkup. Three consecutive readings show 150/95 mmHg, 155/98 mmHg, and 148/96 mmHg.",
+                question: "In the reading 150/95 mmHg, what does 95 mmHg represent?",
+                options: ["Systolic pressure", "Diastolic pressure", "Pulse pressure", "Mean arterial pressure"],
+                correct: 1, explanation: "Lower number (95 mmHg) is Diastolic pressure (resting cardiac phase pressure)."
+            },
+            {
+                id: 59, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 8:</b> An experimental animal has its adrenal cortex surgically removed. Observers track changes in kidney function and urine output.",
+                question: "Which hormone deficiency will result from adrenalectomy affecting electrolyte balance?",
+                options: ["ADH", "Aldosterone", "ANF", "Parathormone"],
+                correct: 1, explanation: "Adrenal cortex secretes mineralocorticoid Aldosterone."
+            },
+            {
+                id: 60, type: "Case Study", subtopic: "Excretory Products & Elimination",
+                context: "<b>Case Study 8:</b> An experimental animal has its adrenal cortex surgically removed. Observers track changes in kidney function and urine output.",
+                question: "What will happen to Na<sup>+</sup> and K<sup>+</sup> levels in urine without Aldosterone?",
+                options: ["Increased Na<sup>+</sup> excretion, decreased K<sup>+</sup> excretion", "Decreased Na<sup>+</sup> excretion, increased K<sup>+</sup> excretion", "Increased reabsorption of both", "No change"],
+                correct: 0, explanation: "Aldosterone reabsorbs Na<sup>+</sup> and secretes K<sup>+</sup>; its absence causes Na<sup>+</sup> loss and K<sup>+</sup> retention."
+            },
+
+            // --- 25 CRITICAL THINKING QUESTIONS ---
+            {
+                id: 61, type: "Critical Thinking", subtopic: "Breathing & Exchange of Gases",
+                question: "If a person travels rapidly from sea level to an altitude of 4500 meters, what physiological compensation occurs after 48 hours?",
+                options: ["Decreased breathing rate and decreased RBC count", "Increased RBC production, increased breathing rate, and decreased binding affinity of Hb", "Decreased kidney erythropoietin secretion", "Shift of O<sub>2</sub> dissociation curve strictly to left"],
+                correct: 1, explanation: "Acclimatization to high altitude involves increased Erythropoietin (RBCs), hyperventilation, and reduced Hb affinity to release O<sub>2</sub> to tissues."
+            },
+            {
+                id: 62, type: "Critical Thinking", subtopic: "Breathing & Exchange of Gases",
+                question: "Arrange the partial pressure of Oxygen (pO<sub>2</sub>) in decreasing order: (i) Alveoli, (ii) Deoxygenated blood, (iii) Oxygenated blood, (iv) Tissues.",
+                options: ["(i) > (iii) > (ii) = (iv)", "(i) > (ii) > (iii) > (iv)", "(iii) > (i) > (iv) > (ii)", "(iv) > (iii) > (i) > (ii)"],
+                correct: 0, explanation: "pO<sub>2</sub>: Alveoli (104) > Oxygenated blood (95) > Deoxygenated blood (40) = Tissues (40 mmHg)."
+            },
+            {
+                id: 63, type: "Critical Thinking", subtopic: "Breathing & Exchange of Gases",
+                question: "What percentage of CO<sub>2</sub> is transported bound to hemoglobin as carbamino-hemoglobin?",
+                options: ["7%", "20-25%", "70%", "97%"],
+                correct: 1, explanation: "CO<sub>2</sub> transport breakdown: 7% dissolved in plasma, 20-25% as carbamino-hemoglobin, 70% as bicarbonate ions (HCO<sub>3</sub><sup>-</sup>)."
+            },
+            {
+                id: 64, type: "Critical Thinking", subtopic: "Breathing & Exchange of Gases",
+                question: "Which factor does NOT shift the Oxygen-Hemoglobin Dissociation Curve to the left?",
+                options: ["High pO<sub>2</sub>", "Low Temperature", "High pH (low H<sup>+</sup>)", "High pCO<sub>2</sub>"],
+                correct: 3, explanation: "High pCO<sub>2</sub> shifts curve to the RIGHT (Bohr effect), facilitating O<sub>2</sub> unloading."
+            },
+            {
+                id: 65, type: "Critical Thinking", subtopic: "Breathing & Exchange of Gases",
+                question: "A person forcedly expires maximum air after forced inspiration. Total volume of air expired is equal to:",
+                options: ["TV + ERV", "TV + IRV", "Vital Capacity (VC)", "Inspiratory Capacity"],
+                correct: 2, explanation: "Maximum air expired after maximum inspiration is Vital Capacity (VC)."
+            },
+            {
+                id: 66, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "Which blood component is key in converting soluble Fibrinogen into insoluble Fibrin threads during blood coagulation?",
+                options: ["Prothrombin", "Thrombin", "Thrombokinase", "Proconvertin"],
+                correct: 1, explanation: "Thrombin enzyme converts fibrinogen monomers into fibrin polymer threads."
+            },
+            {
+                id: 67, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "If the vagus nerve (parasympathetic neural signal) supplying the heart is stimulated, what will be the effect on cardiac function?",
+                options: ["Heart rate and cardiac output increase", "Heart rate and speed of action potential conduction decrease", "No effect on SAN", "Ventricular contraction force increases drastically"],
+                correct: 1, explanation: "Parasympathetic signals via vagus nerve decrease heart rate and conduction speed."
+            },
+            {
+                id: 68, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "Trace the correct sequence of electrical impulse conduction in human heart:",
+                options: ["SAN → AVN → Bundle of His → Purkinje fibers", "AVN → SAN → Purkinje fibers → Bundle of His", "SAN → Purkinje fibers → AVN → Bundle of His", "Bundle of His → SAN → AVN → Purkinje fibers"],
+                correct: 0, explanation: "Normal conduction path: SAN → AVN → AV Bundle / Bundle of His → Purkinje fibers."
+            },
+            {
+                id: 69, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "Match the Leukocyte with its percentage in total WBCs:<br>1. Neutrophils  (a) 0.5 - 1%<br>2. Basophils    (b) 60 - 65%<br>3. Monocytes    (c) 2 - 3%<br>4. Eosinophils  (d) 6 - 8%",
+                options: ["1-b, 2-a, 3-d, 4-c", "1-a, 2-b, 3-c, 4-d", "1-b, 2-c, 3-a, 4-d", "1-d, 2-a, 3-b, 4-c"],
+                correct: 0, explanation: "Neutrophils (60-65%), Basophils (0.5-1%), Monocytes (6-8%), Eosinophils (2-3%)."
+            },
+            {
+                id: 70, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "Hepatic portal vein drains blood into liver from which organ system?",
+                options: ["Kidneys", "Lungs", "Gastrointestinal tract / Intestine", "Heart"],
+                correct: 2, explanation: "Hepatic portal vein carries nutrient-rich blood from gut/intestine to liver."
+            },
+            {
+                id: 71, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "A person's arterial blood pressure is recorded as 120/80 mmHg. What is his Pulse Pressure?",
+                options: ["40 mmHg", "80 mmHg", "120 mmHg", "200 mmHg"],
+                correct: 0, explanation: "Pulse Pressure = Systolic BP - Diastolic BP = 120 - 80 = 40 mmHg."
+            },
+            {
+                id: 72, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "During which phase of the cardiac cycle are all four heart valves (AV and Semilunar valves) closed simultaneously?",
+                options: ["Atrial systole & Ventricular systole", "Isovolumetric contraction & Isovolumetric relaxation", "Joint diastole only", "Atrial diastole only"],
+                correct: 1, explanation: "Isovolumetric phases (contraction and relaxation) feature closure of all 4 valves."
+            },
+            {
+                id: 73, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Identify the nitrogenous waste excretion mode in order: Cockroach, Pigeon, Human, Tadpole.",
+                options: ["Uricotelic, Uricotelic, Ureotelic, Ammonotelic", "Ammonotelic, Ureotelic, Uricotelic, Ureotelic", "Ureotelic, Uricotelic, Ammonotelic, Uricotelic", "Uricotelic, Ammonotelic, Ureotelic, Uricotelic"],
+                correct: 0, explanation: "Cockroach & Pigeon (Uricotelic), Human (Ureotelic), Tadpole (Ammonotelic)."
+            },
+            {
+                id: 74, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Net Filtration Pressure (NFP) in glomerulus is calculated as NFP = GHP - (BCOP + CHP). If Glomerular Hydrostatic Pressure (GHP) = 60 mmHg, Blood Colloidal Osmotic Pressure (BCOP) = 32 mmHg, and Capsular Hydrostatic Pressure (CHP) = 18 mmHg, calculate NFP.",
+                options: ["10 mmHg", "20 mmHg", "30 mmHg", "45 mmHg"],
+                correct: 0, explanation: "NFP = 60 - (32 + 18) = 60 - 50 = 10 mmHg."
+            },
+            {
+                id: 75, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Which segment of the nephron plays the primary role in maintaining pH and ionic balance of body fluids by selective secretion of H<sup>+</sup>, K<sup>+</sup> and NH<sub>3</sub>?",
+                options: ["Bowman's Capsule", "PCT and DCT", "Descending limb of Henle", "Glomerulus"],
+                correct: 1, explanation: "PCT and DCT selectively secrete H<sup>+</sup>, K<sup>+</sup>, and ammonia into filtrate to regulate pH."
+            },
+            {
+                id: 76, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "What triggers the Juxtaglomerular apparatus (JGA) to release Renin?",
+                options: ["Increase in GFR", "Fall in GFR / Glomerular blood pressure", "High blood pressure", "Release of ANF"],
+                correct: 1, explanation: "Drop in GFR or renal arterial blood pressure stimulates JG cells to release Renin."
+            },
+            {
+                id: 77, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Angiotensin II acts as a potent vasoconstrictor and performs which dual endocrine function?",
+                options: ["Inhibits ADH and suppresses thirst", "Stimulates Adrenal Cortex to release Aldosterone", "Inhibits Na+ reabsorption", "Triggers ANF release from ventricle"],
+                correct: 1, explanation: "Angiotensin II stimulates adrenal cortex to secrete Aldosterone."
+            },
+            {
+                id: 78, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Human kidneys produce urine that is how many times more concentrated than the initial filtrate formed?",
+                options: ["2 times", "4 times", "10 times", "20 times"],
+                correct: 1, explanation: "Countercurrent mechanism concentrates urine up to 4 times (1200 mOsmol/L vs 300 mOsmol/L)."
+            },
+            {
+                id: 79, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "In the countercurrent mechanism between Henle's loop and Vasa Recta, NaCl is transported by ascending limb of Henle's loop and exchanged with which vessel?",
+                options: ["Descending limb of Vasa Recta", "Ascending limb of Vasa Recta", "PCT", "Collecting duct"],
+                correct: 0, explanation: "NaCl transported by ascending Henle's loop enters descending limb of Vasa Recta."
+            },
+            {
+                id: 80, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Which metabolic waste is excreted by human sweat glands along with NaCl and water?",
+                options: ["Uric acid paste", "Small amounts of Urea and Lactic acid", "Large amounts of Ammonia", "Bilirubin"],
+                correct: 1, explanation: "Sweat contains NaCl, small amounts of urea, lactic acid, etc."
+            },
+            {
+                id: 81, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Involuntary neural mechanism initiating urinary bladder emptying is called:",
+                options: ["Micturition reflex", "Baroreceptor reflex", "Hering-Breuer reflex", "Renal vasoconstriction"],
+                correct: 0, explanation: "Stretch receptors on bladder wall send signals triggering micturition reflex."
+            },
+            {
+                id: 82, type: "Critical Thinking", subtopic: "Excretory Products & Elimination",
+                question: "Renal calculi are insoluble masses of crystallized salts formed within the kidney, mostly composed of:",
+                options: ["Sodium chloride", "Oxalates (Calcium oxalate)", "Potassium phosphate", "Urea crystals"],
+                correct: 1, explanation: "Kidney stones (calculi) are primarily composed of Calcium Oxalate."
+            },
+            {
+                id: 83, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "Erythroblastosis foetalis can be prevented by administering what to an Rh<sup>-</sup> mother immediately after delivery of her first Rh<sup>+</sup> child?",
+                options: ["Anti-Rh antibodies (RhO-GAM)", "Rh antigens", "Heparin injection", "Histamine"],
+                correct: 0, explanation: "Injecting anti-Rh antibodies neutralizes fetal Rh antigens before maternal sensitization."
+            },
+            {
+                id: 84, type: "Critical Thinking", subtopic: "Breathing & Exchange of Gases",
+                question: "The conducting part of human respiratory system extends from external nostrils up to:",
+                options: ["Alveoli", "Terminal bronchioles", "Primary bronchi", "Trachea"],
+                correct: 1, explanation: "Conducting zone extends from external nostrils to terminal bronchioles."
+            },
+            {
+                id: 85, type: "Critical Thinking", subtopic: "Body Fluids & Circulation",
+                question: "Which blood vessel carries blood with the highest concentration of urea in a healthy mammal?",
+                options: ["Renal vein", "Hepatic vein", "Hepatic portal vein", "Pulmonary artery"],
+                correct: 1, explanation: "Liver synthesizes urea; hence Hepatic vein leaving the liver carries maximum urea concentration."
+            },
+
+            // --- 5 DIAGRAM BASED QUESTIONS ---
+            {
+                id: 86, type: "Diagram Based", subtopic: "Breathing & Exchange of Gases", diagram: "respiratory",
+                question: "In the provided diagram of human respiratory system, identify structure <b>C</b> and its primary functional role:",
+                options: ["Trachea - windpipe conduction", "Bronchus - cartilage ring support", "Alveoli - thin vascular site of gas exchange", "Diaphragm - muscular partition"],
+                correct: 2, explanation: "Structure C represents Alveoli, thin vascular sacs where diffusion occurs."
+            },
+            {
+                id: 87, type: "Diagram Based", subtopic: "Body Fluids & Circulation", diagram: "heart",
+                question: "Refer to the diagram of human heart chambers. Identify location <b>A</b> (yellow dot) and its physiological role:",
+                options: ["AV Node - delays impulse conduction", "SA Node - pacemaker located in right atrium upper wall", "Bundle of His - ventricular contraction", "Purkinje fibers - papillary muscle excitation"],
+                correct: 1, explanation: "Point A is the Sino-atrial Node (SAN), natural pacemaker in right atrium."
+            },
+            {
+                id: 88, type: "Diagram Based", subtopic: "Excretory Products & Elimination", diagram: "nephron",
+                question: "Examine the nephron diagram. Identify region <b>A</b> and its ultrafiltration function:",
+                options: ["Glomerulus - tuft of capillaries receiving blood from afferent arteriole", "Bowman's capsule - reabsorbs glucose", "PCT - active secretion site", "Loop of Henle - countercurrent generator"],
+                correct: 0, explanation: "A represents Glomerulus, capillary network filtered under hydrostatic pressure."
+            },
+            {
+                id: 89, type: "Diagram Based", subtopic: "Body Fluids & Circulation", diagram: "ecg",
+                question: "Analyze the standard ECG waveform diagram. What cardiac event is represented by the peak labeled <b>QRS</b> complex?",
+                options: ["Atrial depolarization", "Ventricular depolarization & initiation of ventricular contraction", "Ventricular repolarization", "End of joint diastole"],
+                correct: 1, explanation: "QRS complex represents ventricular depolarization leading to ventricular contraction."
+            },
+            {
+                id: 90, type: "Diagram Based", subtopic: "Excretory Products & Elimination", diagram: "countercurrent",
+                question: "Observe the countercurrent mechanism schematic. How do Henle's loop and Vasa Recta maintain medullary hyperosmolarity?",
+                options: ["Parallel fluid flow in same direction", "Counter-current fluid flow creating osmotic gradient from 300 to 1200 mOsmol/L", "Active pumping of urea into renal cortex", "Complete blockage of water reabsorption"],
+                correct: 1, explanation: "Opposite flow in loop and vasa recta creates 300-1200 mOsmol/L medullary gradient."
+            }
+        ];
+
+        // =========================================================================
+        // 2. STATE MANAGEMENT & GLOBALS
+        // =========================================================================
+        let shuffledQuestions = [];
+        let candidateName = "";
+        let generatedCaptchaCode = "";
+        let currentQuestionIdx = 0;
+        let userResponses = {}; // { index: optionIndex }
+        let markedForReview = {}; // { index: true/false }
+        let timerInterval = null;
+        let timeRemainingSeconds = 3600; // 60 minutes
+        let warningCount = 0;
+
+        // Date password calculation (DDMMYYYY)
+        const todayObj = new Date();
+        const ddStr = String(todayObj.getDate()).padStart(2, '0');
+        const mmStr = String(todayObj.getMonth() + 1).padStart(2, '0');
+        const yyyyStr = todayObj.getFullYear();
+        const expectedDatePassword = ddStr + mmStr + yyyyStr;
+
+        window.onload = function() {
+            document.getElementById("hintDate").innerText = expectedDatePassword;
+            generateCaptcha();
+            setupAntiCheatListeners();
+        };
+
+        function generateCaptcha() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let code = "";
+            for(let i = 0; i < 5; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            generatedCaptchaCode = code;
+            document.getElementById("captchaBox").innerText = code;
+        }
+
+        function createWatermarkOverlay(name) {
+            const grid = document.getElementById("watermarkGrid");
+            grid.innerHTML = "";
+            const text = `${name || 'CBT EXAM'} • 8910587106 • ${expectedDatePassword}`;
+            for(let i = 0; i < 35; i++) {
+                const el = document.createElement("div");
+                el.className = "watermark-text";
+                el.innerText = text;
+                grid.appendChild(el);
+            }
+        }
+
+        // =========================================================================
+        // 3. LOGIN & SECURITY VERIFICATION
+        // =========================================================================
+        function handleLogin(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById("inputCandidateName").value.trim();
+            const captchaInput = document.getElementById("inputCaptcha").value.trim().toUpperCase();
+            const passInput = document.getElementById("inputPassword").value.trim();
+
+            if (!nameInput) {
+                alert("Please enter your full name.");
+                return;
+            }
+            if (captchaInput !== generatedCaptchaCode) {
+                alert("Incorrect Captcha! Please re-type the code.");
+                generateCaptcha();
+                return;
+            }
+            if (passInput !== expectedDatePassword) {
+                alert(`Incorrect Password! Password must match current date in DDMMYYYY format (${expectedDatePassword}).`);
+                return;
+            }
+
+            candidateName = nameInput;
+            document.getElementById("headerCandidateName").innerText = candidateName;
+            document.getElementById("headerDateDisplay").innerText = `Date: ${ddStr}/${mmStr}/${yyyyStr}`;
+            document.getElementById("candidateHeaderInfo").classList.remove("hidden");
+
+            createWatermarkOverlay(candidateName);
+
+            document.getElementById("loginScreen").classList.add("hidden");
+            document.getElementById("rulesScreen").classList.remove("hidden");
+        }
+
+        // =========================================================================
+        // 4. EXAM INITIALIZATION & RANDOM SHUFFLING
+        // =========================================================================
+        function startExam() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+
+            // Dynamically shuffle all 90 questions for this unique candidate session
+            shuffledQuestions = [...masterQuestions].sort(() => Math.random() - 0.5);
+
+            document.getElementById("rulesScreen").classList.add("hidden");
+            document.getElementById("examScreen").classList.remove("hidden");
+
+            renderPaletteGrid();
+            loadQuestion(0);
+            startCountdownTimer();
+        }
+
+        function startCountdownTimer() {
+            timerInterval = setInterval(() => {
+                if (timeRemainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("⏰ Time's up! Submitting your examination automatically.");
+                    processExamSubmission();
+                    return;
+                }
+                timeRemainingSeconds--;
+                const mins = String(Math.floor(timeRemainingSeconds / 60)).padStart(2, '0');
+                const secs = String(timeRemainingSeconds % 60).padStart(2, '0');
+                document.getElementById("timerDisplay").innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        // =========================================================================
+        // 5. QUESTION DISPLAY & NAVIGATION
+        // =========================================================================
+        function loadQuestion(idx) {
+            currentQuestionIdx = idx;
+            const q = shuffledQuestions[idx];
+
+            document.getElementById("currentQNum").innerText = idx + 1;
+            document.getElementById("questionTypeBadge").innerText = q.type;
+
+            // Handle Case Study Context
+            const caseBox = document.getElementById("caseStudyBox");
+            if (q.context) {
+                caseBox.classList.remove("hidden");
+                document.getElementById("caseStudyText").innerHTML = q.context;
+            } else {
+                caseBox.classList.add("hidden");
+            }
+
+            // Handle Diagram Context
+            const diagBox = document.getElementById("diagramBox");
+            if (q.diagram && svgDiagrams[q.diagram]) {
+                diagBox.classList.remove("hidden");
+                document.getElementById("diagramSvgContainer").innerHTML = svgDiagrams[q.diagram];
+            } else {
+                diagBox.classList.add("hidden");
+            }
+
+            document.getElementById("questionText").innerHTML = q.question;
+
+            // Render Options
+            const container = document.getElementById("optionsContainer");
+            container.innerHTML = "";
+
+            q.options.forEach((optText, oIdx) => {
+                const isChecked = userResponses[idx] === oIdx;
+                container.innerHTML += `
+                    <label class="flex items-center space-x-3 bg-slate-800/60 border ${isChecked ? 'border-emerald-500 bg-emerald-500/10' : 'border-slate-700'} hover:border-slate-500 p-3 rounded-xl cursor-pointer transition">
+                        <input type="radio" name="optionChoice" value="${oIdx}" ${isChecked ? 'checked' : ''} onchange="selectOption(${oIdx})" class="option-radio hidden">
+                        <span class="w-6 h-6 rounded-full border ${isChecked ? 'border-emerald-500 bg-emerald-500' : 'border-slate-500'} flex items-center justify-center text-xs text-white font-bold">
+                            ${isChecked ? '✓' : String.fromCharCode(65 + oIdx)}
+                        </span>
+                        <span class="text-xs sm:text-sm text-slate-200 leading-snug">${optText}</span>
+                    </label>
+                `;
+            });
+
+            updatePaletteItem(idx);
+        }
+
+        function selectOption(oIdx) {
+            userResponses[currentQuestionIdx] = oIdx;
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function clearResponse() {
+            delete userResponses[currentQuestionIdx];
+            delete markedForReview[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function saveAndNext() {
+            if (currentQuestionIdx < shuffledQuestions.length - 1) {
+                loadQuestion(currentQuestionIdx + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIdx > 0) {
+                loadQuestion(currentQuestionIdx - 1);
+            }
+        }
+
+        function markForReviewAndNext() {
+            markedForReview[currentQuestionIdx] = true;
+            saveAndNext();
+        }
+
+        // =========================================================================
+        // 6. QUESTION PALETTE GRID LOGIC (90 DOTS)
+        // =========================================================================
+        function renderPaletteGrid() {
+            const grid = document.getElementById("paletteGrid");
+            grid.innerHTML = "";
+            shuffledQuestions.forEach((_, idx) => {
+                const btn = document.createElement("button");
+                btn.id = `paletteDot_${idx}`;
+                btn.className = getDotClass(idx);
+                btn.innerText = idx + 1;
+                btn.onclick = () => loadQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function updatePaletteItem(idx) {
+            const btn = document.getElementById(`paletteDot_${idx}`);
+            if (btn) {
+                btn.className = getDotClass(idx);
+            }
+        }
+
+        function getDotClass(idx) {
+            const isAnswered = userResponses[idx] !== undefined;
+            const isMarked = markedForReview[idx] === true;
+            const isCurrent = idx === currentQuestionIdx;
+
+            let bgClass = "bg-slate-700 text-slate-300"; // Not Visited
+            if (isAnswered && isMarked) {
+                bgClass = "bg-purple-600 text-white ring-2 ring-emerald-400"; // Answered & Marked
+            } else if (isMarked) {
+                bgClass = "bg-purple-600 text-white"; // Marked for Review
+            } else if (isAnswered) {
+                bgClass = "bg-emerald-500 text-white"; // Answered
+            } else if (idx <= currentQuestionIdx) {
+                bgClass = "bg-rose-500 text-white"; // Not Answered
+            }
+
+            return `w-8 h-8 rounded-lg font-bold text-[11px] flex items-center justify-center transition border ${isCurrent ? 'ring-2 ring-emerald-400 border-white' : 'border-transparent'} ${bgClass}`;
+        }
+
+        // =========================================================================
+        // 7. ANTI-CHEAT SECURITY LISTENERS
+        // =========================================================================
+        function setupAntiCheatListeners() {
+            document.addEventListener('copy', (e) => e.preventDefault());
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden && !document.getElementById("examScreen").classList.contains("hidden")) {
+                    warningCount++;
+                    alert(`🚨 SECURITY WARNING #${warningCount}: Tab switching detected! Test rules strictly prohibit leaving the exam portal.`);
+                }
+            });
+        }
+
+        // =========================================================================
+        // 8. EXAM SUBMISSION & GRAPHICAL REPORTING
+        // =========================================================================
+        function confirmSubmitExam() {
+            if (confirm("Are you sure you want to finalize and submit your NEET Biology CBT exam?")) {
+                processExamSubmission();
+            }
+        }
+
+        function processExamSubmission() {
+            clearInterval(timerInterval);
+            if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+
+            document.getElementById("examScreen").classList.add("hidden");
+            document.getElementById("reportScreen").classList.remove("hidden");
+
+            let score = 0, correctCount = 0, incorrectCount = 0, unattemptedCount = 0;
+            const subtopicPerformance = {};
+
+            shuffledQuestions.forEach((q, idx) => {
+                const sub = q.subtopic || "General Biology";
+                if (!subtopicPerformance[sub]) subtopicPerformance[sub] = { correct: 0, wrong: 0, total: 0 };
+                subtopicPerformance[sub].total++;
+
+                const userAns = userResponses[idx];
+                if (userAns === undefined) {
+                    unattemptedCount++;
+                } else if (userAns === q.correct) {
+                    correctCount++;
+                    score += 4;
+                    subtopicPerformance[sub].correct++;
+                } else {
+                    incorrectCount++;
+                    score -= 1;
+                    subtopicPerformance[sub].wrong++;
+                }
+            });
+
+            const totalAttempted = correctCount + incorrectCount;
+            const accuracy = totalAttempted > 0 ? ((correctCount / totalAttempted) * 100).toFixed(1) : "0.0";
+
+            document.getElementById("reportCandidateName").innerText = candidateName;
+            document.getElementById("reportDate").innerText = `${ddStr}/${mmStr}/${yyyyStr}`;
+            document.getElementById("totalMarksScore").innerText = `${score} / 360`;
+            document.getElementById("metricCorrect").innerText = correctCount;
+            document.getElementById("metricIncorrect").innerText = incorrectCount;
+            document.getElementById("metricUnattempted").innerText = unattemptedCount;
+            document.getElementById("metricAccuracy").innerText = `${accuracy}%`;
+
+            // Evaluate Weak Areas
+            const weakContainer = document.getElementById("weakAreasContainer");
+            weakContainer.innerHTML = "";
+            let weakFound = false;
+
+            for (const [sub, stats] of Object.entries(subtopicPerformance)) {
+                if (stats.wrong > 0 || (stats.correct / stats.total) < 0.6) {
+                    weakFound = true;
+                    weakContainer.innerHTML += `
+                        <p class="flex items-center space-x-2">
+                            <span class="text-rose-400 font-bold">⚠️</span>
+                            <span><b>${sub}:</b> ${stats.wrong} errors out of ${stats.total} questions. Recommended for targeted NCERT review.</span>
+                        </p>
+                    `;
+                }
+            }
+            if (!weakFound) {
+                weakContainer.innerHTML = "<p class='text-emerald-400 font-bold'>🌟 Exceptional mastery across all Human Physiology subtopics!</p>";
+            }
+
+            renderPerformanceChart(correctCount, incorrectCount, unattemptedCount);
+            renderAnswerKeysList();
+        }
+
+        function renderPerformanceChart(correct, incorrect, unattempted) {
+            const ctx = document.getElementById("performanceChart").getContext("2d");
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Correct (+4)', 'Incorrect (-1)', 'Unattempted'],
+                    datasets: [{
+                        data: [correct, incorrect, unattempted],
+                        backgroundColor: ['#10b981', '#f43f5e', '#64748b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function renderAnswerKeysList() {
+            const container = document.getElementById("answerKeysList");
+            container.innerHTML = "";
+
+            shuffledQuestions.forEach((q, idx) => {
+                const userAns = userResponses[idx];
+                const isCorrect = userAns === q.correct;
+                const isUnattempted = userAns === undefined;
+
+                let statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-slate-300">Unattempted</span>`;
+                if (!isUnattempted) {
+                    statusBadge = isCorrect 
+                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Correct (+4)</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">Incorrect (-1)</span>`;
+                }
+
+                container.innerHTML += `
+                    <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-4 space-y-2 text-xs">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <span class="font-bold text-emerald-400">Question ${idx + 1} (${q.type})</span>
+                            ${statusBadge}
+                        </div>
+                        <p class="text-slate-200 leading-relaxed font-medium">${q.question}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-slate-300">
+                            <div>Your Selection: <b class="${isCorrect ? 'text-emerald-400' : isUnattempted ? 'text-slate-400' : 'text-rose-400'}">${userAns !== undefined ? q.options[userAns] : 'None'}</b></div>
+                            <div>Correct Answer: <b class="text-emerald-400">${q.options[q.correct]}</b></div>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-400 leading-relaxed text-[11px] mt-2">
+                            <b class="text-amber-400 block mb-0.5">NCERT Biology Explanation:</b>
+                            ${q.explanation}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // =========================================================================
+        // 9. WHATSAPP MARKS & PNG CERTIFICATE GENERATION
+        // =========================================================================
+        function generateAndSendMarksImage() {
+            const cert = document.getElementById("certificateCapture");
+            document.getElementById("certName").innerText = candidateName;
+            document.getElementById("certTimestamp").innerText = new Date().toLocaleString();
+            document.getElementById("certTotalScore").innerText = document.getElementById("totalMarksScore").innerText;
+            document.getElementById("certCorrect").innerText = document.getElementById("metricCorrect").innerText;
+            document.getElementById("certIncorrect").innerText = document.getElementById("metricIncorrect").innerText;
+            document.getElementById("certAccuracy").innerText = document.getElementById("metricAccuracy").innerText;
+            document.getElementById("certUUID").innerText = 'BIO-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+
+            html2canvas(cert, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+
+                const a = document.createElement('a');
+                a.href = imgData;
+                a.download = `${candidateName}_NEET_Biology_Result.png`;
+                a.click();
+
+                const textMsg = encodeURIComponent(
+                    `*Soumendra Sir's Biology Classes - Official NEET Scorecard*\n` +
+                    `Candidate: ${candidateName}\n` +
+                    `Exam: NEET BIOLOGY XI EXAM SERIES 8 SET A\n` +
+                    `Total Score: ${document.getElementById("totalMarksScore").innerText}\n` +
+                    `Correct Answers: ${document.getElementById("metricCorrect").innerText}\n` +
+                    `Incorrect Answers: ${document.getElementById("metricIncorrect").innerText}\n` +
+                    `Accuracy: ${document.getElementById("metricAccuracy").innerText}\n` +
+                    `Mark sheet PNG image downloaded to candidate device.`
+                );
+                window.open(`https://wa.me/918910587106?text=${textMsg}`, '_blank');
+            });
+        }
+    </script>
+</body>
+</html>
